@@ -1,0 +1,5 @@
+jupyterlab
+wheel
+fibertree @ git+https://github.com/Fibertree-Project/fibertree
+teaal @ git+https://github.com/FPSG-UIUC/teaal-compiler
+fibertree_bootstrap @ git+https://github.com/Fibertree-Project/fibertree-bootstrap

@@ -16,7 +16,7 @@ Must use at least Python 3.9
 The TeAAL specifications presented in this repository are the combined effort
 of many people over the course of many years, including:
 
-- Timor Averbach
+- Timor Averbuch
 - Alex Dicheva
 - Joel S. Emer
 - Christopher W. Fletcher

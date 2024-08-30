@@ -18,9 +18,12 @@ of many people over the course of many years, including:
 
 - Timor Averbach
 - Alex Dicheva
-- Chris Fletcher
+- Joel S. Emer
+- Christopher W. Fletcher
 - Yuxin Jin
 - Nandeeka Nayak
+- Toluwanimi O. Odemuyiwa
+- Michael Pellaeur
 - Jules Peyrat
 - Chenxi Wan
 - Yingchen Wang

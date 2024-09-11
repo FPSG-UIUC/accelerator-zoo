@@ -3,12 +3,17 @@ from fibertree_bootstrap import *
 from teaal.parse import *
 from teaal.trans.hifiber import HiFiber
 
-def compile(yaml):
-    einsum = Einsum.from_str(yaml)
-    mapping = Mapping.from_str(yaml)
-    arch = Architecture.from_str(yaml)
-    bindings = Bindings.from_str(yaml)
-    format_ = Format.from_str(yaml)
+def compile(yaml, generate_video = True):
+    str_yaml = yaml
+    if(generate_video == False):
+       index = str_yaml.find("spacetime")
+       str_yaml = str_yaml[:index]
+    
+    einsum = Einsum.from_str(str_yaml)
+    mapping = Mapping.from_str(str_yaml)
+    arch = Architecture.from_str(str_yaml)
+    bindings = Bindings.from_str(str_yaml)
+    format_ = Format.from_str(str_yaml)
 
     hifiber = HiFiber(einsum, mapping, arch, bindings, format_)
 
@@ -33,11 +38,10 @@ def check_matmul(A, B, Z):
 
 def check_conv(I, F, O, step=1):
     # Note: I, F, and O should be un-partitioned
-    print(I.getRankIds())
+    
     I_BCHW = I.swizzleRanks(rank_ids=["N", "C", "H", "W"])
     F_MCRS = F.swizzleRanks(rank_ids=["M", "C", "R", "S"])
     O_BMPQ = O.swizzleRanks(rank_ids=["N", "M", "E", "F"])
-
     B, C, H, W = I_BCHW.getShape()
     M, C, R, S = F_MCRS.getShape()
     B, M, P, Q = O_BMPQ.getShape()
@@ -56,3 +60,4 @@ def check_conv(I, F, O, step=1):
                                 o_ref += i_val * f_val
 
     print("Result correct?", O_BMPQ == O_BMPQ_corr)
+    

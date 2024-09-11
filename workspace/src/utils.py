@@ -33,15 +33,16 @@ def check_matmul(A, B, Z):
 
 def check_conv(I, F, O, step=1):
     # Note: I, F, and O should be un-partitioned
-    I_BCHW = I.swizzleRanks(rank_ids=["B", "C", "H", "W"])
+    print(I.getRankIds())
+    I_BCHW = I.swizzleRanks(rank_ids=["N", "C", "H", "W"])
     F_MCRS = F.swizzleRanks(rank_ids=["M", "C", "R", "S"])
-    O_BMPQ = O.swizzleRanks(rank_ids=["B", "M", "P", "Q"])
+    O_BMPQ = O.swizzleRanks(rank_ids=["N", "M", "E", "F"])
 
     B, C, H, W = I_BCHW.getShape()
     M, C, R, S = F_MCRS.getShape()
     B, M, P, Q = O_BMPQ.getShape()
 
-    O_BMPQ_corr = Tensor(rank_ids=["B", "M", "P", "Q"], name="O")
+    O_BMPQ_corr = Tensor(rank_ids=["N", "M", "E", "F"], name="O")
     o_b = O_BMPQ_corr.getRoot()
     i_b = I_BCHW.getRoot()
     f_m = F_MCRS.getRoot()

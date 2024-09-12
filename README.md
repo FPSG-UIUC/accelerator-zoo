@@ -28,6 +28,7 @@ of many people over the course of many years, including:
 - Chenxi Wan
 - Yingchen Wang
 - Xinrui Wu
+- Yan Zhu
 
 We would also like to thank the following people, whose insights allowed us to
 better understand, describe, and, in some cases, even validate our TeAAL

@@ -8,7 +8,7 @@ def compile(yaml, generate_video = True):
     if(generate_video == False):
        index = str_yaml.find("spacetime")
        str_yaml = str_yaml[:index]
-    
+
     einsum = Einsum.from_str(str_yaml)
     mapping = Mapping.from_str(str_yaml)
     arch = Architecture.from_str(str_yaml)
@@ -36,28 +36,28 @@ def check_matmul(A, B, Z):
 
     print("Result correct?", Z_MN == Z_MN_corr)
 
-def check_conv(I, F, O, step=1):
+def check_conv(I, F, O, stride=1):
     # Note: I, F, and O should be un-partitioned
-    
-    I_BCHW = I.swizzleRanks(rank_ids=["N", "C", "H", "W"])
-    F_MCRS = F.swizzleRanks(rank_ids=["M", "C", "R", "S"])
-    O_BMPQ = O.swizzleRanks(rank_ids=["N", "M", "E", "F"])
-    B, C, H, W = I_BCHW.getShape()
-    M, C, R, S = F_MCRS.getShape()
-    B, M, P, Q = O_BMPQ.getShape()
 
-    O_BMPQ_corr = Tensor(rank_ids=["N", "M", "E", "F"], name="O")
-    o_b = O_BMPQ_corr.getRoot()
-    i_b = I_BCHW.getRoot()
+    I_NCHW = I.swizzleRanks(rank_ids=["N", "C", "H", "W"])
+    F_MCRS = F.swizzleRanks(rank_ids=["M", "C", "R", "S"])
+    O_NMEF = O.swizzleRanks(rank_ids=["N", "M", "E", "F"])
+    N, C, H, W = I_NCHW.getShape()
+    M, C, R, S = F_MCRS.getShape()
+    N, M, E, F = O_NMEF.getShape()
+
+    O_NMEF_corr = Tensor(rank_ids=["N", "M", "E", "F"], name="O", shape=[N, M, E, F])
+    o_n = O_NMEF_corr.getRoot()
+    i_n = I_NCHW.getRoot()
     f_m = F_MCRS.getRoot()
-    for b, (o_m, i_c) in o_b << i_b:
-        for m, (o_p, f_c) in o_m << f_m:
-            for c, (i_h, f_r) in i_c & f_c:
-                for r, f_s in f_r:
-                    for s, f_val in f_s:
-                        for p, (o_q, i_w) in o_p << i_h.project(trans_fn=lambda h: -1 / step * r + 1 / step * h, interval=(0, P)).prune(trans_fn=lambda i, c, p: c % 1 == 0):
-                            for q, (o_ref, i_val) in o_q << i_w.project(trans_fn=lambda w: -1 / step * s + 1 / step * w, interval=(0, Q)).prune(trans_fn=lambda i, c, p: c % 1 == 0):
+    for n, (o_m, i_c) in o_n << i_n:
+        for m, (o_e, f_c) in o_m << f_m:
+            for e, o_f in o_e.iterRangeShapeRef(0, E, 1):
+                for f, o_ref in o_f.iterRangeShapeRef(0, F, 1):
+                    for c, (i_h, f_r) in i_c & f_c:
+                        for r, (i_w, f_s) in i_h.project(trans_fn=lambda h: h + -stride * e, interval=(0, R)) & f_r:
+                            for s, (i_val, f_val) in i_w.project(trans_fn=lambda w: w + -stride * f, interval=(0, S)) & f_s:
                                 o_ref += i_val * f_val
 
-    print("Result correct?", O_BMPQ == O_BMPQ_corr)
-    
+    print("Result correct?", O_NMEF == O_NMEF_corr)
+

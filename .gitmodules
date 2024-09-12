@@ -1,0 +1,3 @@
+[submodule "setup/native/fibertree"]
+	path = setup/native/fibertree
+	url = git@github.com:Fibertree-Project/fibertree.git

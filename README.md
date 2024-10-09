@@ -28,7 +28,7 @@ source env/bin/activate
 ### Step 3: Install the required packages
 
 ```bash
-pip install -r setup/native/requirements.txt
+python3.12 -m pip install -r setup/native/requirements.txt
 ```
 
 #### Step 4: Start the Jupyter Lab

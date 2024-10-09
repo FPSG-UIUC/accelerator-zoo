@@ -31,6 +31,12 @@ source env/bin/activate
 pip install -r setup/native/requirements.txt
 ```
 
+#### Step 4: Start the Jupyter Lab
+
+```bash
+jupyter lab
+```
+
 ### Option 3: Conda Installation
 
 #### Step 1: Install Conda
@@ -49,6 +55,12 @@ conda env create -p ./env -f setup/native/environment.yaml
 
 ```bash
 conda activate ./env
+```
+
+#### Step 4: Start the Jupyter Lab
+
+```bash
+jupyter lab
 ```
 
 ## Contributors

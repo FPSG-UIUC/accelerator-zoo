@@ -61,3 +61,65 @@ def check_conv(I, F, O, stride=1):
 
     print("Result correct?", O_NMEF == O_NMEF_corr)
 
+def check_MTTKRP(A_IJK, B_JF, C_KF, Y):
+    T_IJF = Tensor(rank_ids=["I", "J", "F"], name="T")
+    t_i = T_IJF.getRoot()
+    a_i = A_IJK.getRoot()
+    c_k = C_KF.getRoot()
+    for i_pos, (i, (t_j, a_j)) in enumerate(t_i << a_i):
+        for j_pos, (j, (t_f, a_k)) in enumerate(t_j << a_j):
+            for k_pos, (k, (a_val, c_f)) in enumerate(a_k & c_k):
+                for f_pos, (f, (t_ref, c_val)) in enumerate(t_f << c_f):
+                    t_ref += a_val * c_val
+    
+    Y_IF = Tensor(rank_ids=["I", "F"], name="Y")
+    y_i = Y_IF.getRoot()
+    t_i = T_IJF.getRoot()
+    b_j = B_JF.getRoot()
+    for i_pos, (i, (y_f, t_j)) in enumerate(y_i << t_i):
+        for j_pos, (j, (t_f, b_f)) in enumerate(t_j & b_j):
+            for f_pos, (f, (y_ref, (t_val, b_val))) in enumerate(y_f << (t_f & b_f)):
+                y_ref += t_val * b_val
+    print("Result correct?", Y == Y_IF)
+
+def check_TTMc(A_IJK, B_JV, C_KU, Y):
+    T_IJU = Tensor(rank_ids=["I", "J", "U"], name="T")
+    t_i = T_IJU.getRoot()
+    a_i = A_IJK.getRoot()
+    c_k = C_KU.getRoot()
+    for i_pos, (i, (t_j, a_j)) in enumerate(t_i << a_i):
+        for j_pos, (j, (t_u, a_k)) in enumerate(t_j << a_j):
+            for k_pos, (k, (a_val, c_u)) in enumerate(a_k & c_k):
+                for u_pos, (u, (t_ref, c_val)) in enumerate(t_u << c_u):
+                    t_ref += a_val * c_val
+    Y_IVU = Tensor(rank_ids=["I", "V", "U"], name="Y")
+    y_i = Y_IVU.getRoot()
+    t_i = T_IJU.getRoot()
+    b_j = B_JV.getRoot()
+    for i_pos, (i, (y_v, t_j)) in enumerate(y_i << t_i):
+        for j_pos, (j, (t_u, b_v)) in enumerate(t_j & b_j):
+            for v_pos, (v, (y_u, b_val)) in enumerate(y_v << b_v):
+                for u_pos, (u, (y_ref, t_val)) in enumerate(y_u << t_u):
+                    y_ref += t_val * b_val
+    print("Result correct?", Y == Y_IVU)
+
+def check_matrix_matrix_mul(A_IJ, B_JK, Y):
+    Y_IK = Tensor(rank_ids=["I", "K"], name="Y")
+    y_i = Y_IK.getRoot()
+    a_i = A_IJ.getRoot()
+    b_j = B_JK.getRoot()
+    for i_pos, (i, (y_k, a_j)) in enumerate(y_i << a_i):
+        for j_pos, (j, (a_val, b_k)) in enumerate(a_j & b_j):
+            for k_pos, (k, (y_ref, b_val)) in enumerate(y_k << b_k):
+                y_ref += a_val * b_val
+    print("Result correct?", Y == Y_IK)
+
+def check_matrix_vector_mul(A_IJ, B_J, Y):
+    Y_I = Tensor(rank_ids=["I"], name="Y")
+    y_i = Y_I.getRoot()
+    a_i = A_IJ.getRoot()
+    b_j = B_J.getRoot()
+    for i_pos, (i, (y_ref, a_j)) in enumerate(y_i << a_i):
+        for j_pos, (j, (a_val, b_val)) in enumerate(a_j & b_j):
+            y_ref += a_val * b_val
+    print("Result correct?", Y == Y_I)

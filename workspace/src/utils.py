@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from fibertree_bootstrap import *
 
 from teaal.parse import *
@@ -71,7 +73,7 @@ def check_MTTKRP(A_IJK, B_JF, C_KF, Y):
             for k_pos, (k, (a_val, c_f)) in enumerate(a_k & c_k):
                 for f_pos, (f, (t_ref, c_val)) in enumerate(t_f << c_f):
                     t_ref += a_val * c_val
-    
+
     Y_IF = Tensor(rank_ids=["I", "F"], name="Y")
     y_i = Y_IF.getRoot()
     t_i = T_IJF.getRoot()
@@ -123,3 +125,58 @@ def check_matrix_vector_mul(A_IJ, B_J, Y):
         for j_pos, (j, (a_val, b_val)) in enumerate(a_j & b_j):
             y_ref += a_val * b_val
     print("Result correct?", Y == Y_I)
+
+def check_bfs_sssp(G_SD, start_vertex, P1_V):
+    P1_V_checking = P1_V
+
+    V = G_SD.getShape()[0]
+
+    A0_S = Tensor.fromFiber(rank_ids=["S"], fiber=Fiber([start_vertex], [0]), default=float("inf"), name="A0")
+    P0_V = Tensor.fromFiber(rank_ids=["V"], fiber=Fiber([start_vertex], [0], default=float("inf")), default=float("inf"), name="P0")
+
+    while len(A0_S.getRoot()) > 0:
+        SO_SD = Tensor(rank_ids=["S", "D"], name="SO")
+        so_s = SO_SD.getRoot()
+        g_s = G_SD.getRoot()
+        a0_s = A0_S.getRoot()
+        for s, (so_d, (g_d, a0_val)) in so_s << (g_s & a0_s):
+            for d, (so_ref, g_val) in so_d << g_d:
+                so_ref <<= g_val
+        # Custom default
+        R_V = Tensor(rank_ids=["V"], name="R", default=float("inf"))
+        r_v = R_V.getRoot()
+        so_s = SO_SD.getRoot()
+        a0_s = A0_S.getRoot()
+        for s, (so_d, a0_val) in so_s & a0_s:
+            for v, (r_ref, so_val) in r_v << so_d.project(trans_fn=lambda d: d, interval=(0, V)):
+                # + => min, * => +
+                r_ref <<= min(r_ref, so_val + a0_val)
+        # P0 and P1 are actually the same tensor
+        P1_V = deepcopy(P0_V)
+        p1_v = P1_V.getRoot()
+        r_v = R_V.getRoot()
+        p0_v = P0_V.getRoot()
+        for v, (p1_ref, (_, r_val, p0_val)) in p1_v << (r_v | p0_v):
+            # + => min
+            p1_ref <<= min(r_val, p0_val)
+        # Custom default
+        M_V = Tensor(rank_ids=["V"], name="M", default=False)
+        m_v = M_V.getRoot()
+        p1_v = P1_V.getRoot()
+        p0_v = P0_V.getRoot()
+        for v, (m_ref, (_, p1_val, p0_val)) in m_v << (p1_v | p0_v):
+            # - => !=
+            m_ref <<= p1_val != p0_val
+        # Custom default
+        A1_V = Tensor(rank_ids=["V"], name="A1", default=float("inf"))
+        a1_v = A1_V.getRoot()
+        m_v = M_V.getRoot()
+        p1_v = P1_V.getRoot()
+        for v, (a1_ref, (m_val, p1_val)) in a1_v << (m_v & p1_v):
+            a1_ref <<= p1_val
+
+        # Prepare for the next iteration
+        P0_V = P1_V
+        A0_S = A1_V
+
+    print("Result correct?", P1_V == P1_V_checking)

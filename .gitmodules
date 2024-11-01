@@ -1,3 +1,3 @@
-[submodule "setup/native/fibertree"]
-	path = setup/native/fibertree
-	url = git@github.com:Fibertree-Project/fibertree.git
+[submodule "setup/docker/fibertree-docker"]
+	path = setup/docker/fibertree-docker
+	url = git@github.com:Fibertree-Project/fibertree-docker.git

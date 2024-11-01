@@ -128,8 +128,9 @@ jupyter lab
 
 In the Jupyter lab enviroment, navigate to
 `accelerator-zoo/workspace/notebooks/` (if using the Docker container) or
-`workspace/notebooks/` and select an accelerator.  Each notebook contains
-instructions specific to that notebook and accelerator.
+`workspace/notebooks/` (if using a native installation like Pip or Conda) and
+select an accelerator.  Each notebook contains instructions specific to that
+notebook and accelerator.
 
 ## Contributors
 

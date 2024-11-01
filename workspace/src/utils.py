@@ -180,3 +180,41 @@ def check_bfs_sssp(G_SD, start_vertex, P1_V):
         A0_S = A1_V
 
     print("Result correct?", P1_V == P1_V_checking)
+
+def check_attn(Q_PE, K_ME, V_MF, AV_PF):
+    QK_PM = Tensor(rank_ids=["P", "M"])
+    GM_P = Tensor(rank_ids=["P"], default=-float("inf"))
+    SN_PM = Tensor(rank_ids=["P", "M"])
+    SD_P = Tensor(rank_ids=["P"])
+    A_PM = Tensor(rank_ids=["P", "M"])
+    AV_PF_corr = Tensor(rank_ids=["P", "F"])
+    q_p = Q_PE.getRoot()
+    k_m = K_ME.getRoot()
+    v_m = V_MF.getRoot()
+    qk_p = QK_PM.getRoot()
+    gm_p = GM_P.getRoot()
+    sn_p = SN_PM.getRoot()
+    sd_p = SD_P.getRoot()
+    a_p = A_PM.getRoot()
+    av_p = AV_PF_corr.getRoot()
+
+    for p, (av_f, (a_m, (sd_ref, (sn_m, (gm_ref, (qk_m, q_e)))))) in av_p << (a_p << (sd_p << (sn_p << (gm_p << (qk_p << q_p))))):
+        for m, (qk_ref, k_e) in qk_m << k_m:
+            for e, (q_val, k_val) in q_e & k_e:
+                qk_ref += q_val * k_val
+            gm_ref <<= max(gm_ref, qk_ref)
+        for m, (sn_ref, qk_val) in sn_m << qk_m:
+            sn_ref <<= math.exp(Payload.get(qk_val - gm_ref))
+            sd_ref += sn_ref
+        for m, (a_ref, (v_f, sn_val)) in a_m << (v_m & sn_m):
+            a_ref <<= sn_val / sd_ref
+            for f, (av_ref, v_val) in av_f << v_f:
+                av_ref += a_ref * v_val
+
+    P, F = AV_PF.getShape()
+    close = True
+    for p in range(P):
+        for f in range(F):
+            close = close and (abs(Payload.get(AV_PF.getPayload(p, f) - AV_PF_corr.getPayload(p, f))) < 1e-5)
+
+    print("Result correct?", close)

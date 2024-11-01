@@ -218,3 +218,23 @@ def check_attn(Q_PE, K_ME, V_MF, AV_PF):
             close = close and (abs(Payload.get(AV_PF.getPayload(p, f) - AV_PF_corr.getPayload(p, f))) < 1e-5)
 
     print("Result correct?", close)
+
+def check_sddmm(A, B, C, Z):
+    # Note: A, B, C, and Z should be un-partitioned
+    A_MK = A.swizzleRanks(rank_ids=["M", "K"])
+    B_NK = B.swizzleRanks(rank_ids=["N", "K"])
+    C_MN = C.swizzleRanks(rank_ids=["M", "N"])
+    Z_MN = Z.swizzleRanks(rank_ids=["M", "N"])
+
+    Z_MN_corr = Tensor(rank_ids=["M", "N"], name="Z")
+    z_m = Z_MN_corr.getRoot()
+    a_m = A_MK.getRoot()
+    b_n = B_NK.getRoot()
+    c_m = C_MN.getRoot()
+    for m, (z_n, (c_n, a_k)) in z_m << (c_m & a_m):
+        for n, (z_ref, (c_val, b_k)) in z_n << (c_n & b_n):
+            for k, (a_val, b_val) in a_k & b_k:
+                z_ref += a_val * b_val * c_val
+
+    print("Result correct?", Z_MN == Z_MN_corr)
+

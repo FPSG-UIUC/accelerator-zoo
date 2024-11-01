@@ -13,6 +13,7 @@ representing the following accelerators:
 - [Graphicionado](https://dl.acm.org/doi/10.5555/3195638.3195707)
 - [OuterSPACE](https://ieeexplore.ieee.org/document/8327050)
 - [SIGMA](https://ieeexplore.ieee.org/document/9065523)
+- [SPADE](https://dl.acm.org/doi/10.1145/3579371.3589054)
 - [Tensaurus](https://ieeexplore.ieee.org/document/9065579)
 - [TPUv1](https://arxiv.org/abs/1704.04760)
 

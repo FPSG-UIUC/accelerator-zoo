@@ -164,3 +164,4 @@ cython_debug/
 # Other
 tmp/
 *.swp
+docker-compose.yaml

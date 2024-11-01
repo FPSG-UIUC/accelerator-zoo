@@ -1,10 +1,71 @@
 # Accelerator Zoo
 
+## System Requirements
+
+### Hardware
+
+- x86-64 CPU
+- 5GB disk space
+
+### Software
+
+- [Docker](https://www.docker.com/products/docker-desktop/)
+- Web browser
+
 ## Installation Instructions
 
-### Option 1: Docker
+#### Step 0: Clone the repository
 
-TODO
+Submodules must also be recursively cloned.
+
+```bash
+git clone --recurse-submodules git@github.com:FPSG-UIUC/accelerator-zoo.git
+cd accelerator-zoo
+```
+
+### [Recommended] Option 1: Docker
+
+#### Step 1: Prepare your `docker-compose.yaml`
+
+Copy the `docker-compose.yaml.example` file to a new `docker-compose.yaml`
+
+```bash
+cp docker-compose.yaml.example docker-compose.yaml
+```
+
+Edit the `docker-compose.yaml` with the appropriate `NB_UID` (the user you want
+to own the repository).
+
+#### Step 2: Pull the Docker image
+
+We provide two options for obtaining the docker image. Please choose one of the
+options listed below.
+
+##### Option 1: Use `docker-compose`
+
+```bash
+docker-compose pull
+```
+
+##### Option 2: Build the image from source
+
+```bash
+cd ./setup/docker/fibertree-docker
+make build
+cd ../../..
+```
+
+#### Step 3: Start the container
+
+Start the container, including the Jupyter lab.
+
+```bash
+docker-compose up -d
+```
+
+#### Step 4: Open the Jupyter lab
+
+Navigate to `http://localhost:8888` to open and view the repository.
 
 ### Option 2: Python Virtual Environment
 
@@ -62,6 +123,13 @@ conda activate ./env
 ```bash
 jupyter lab
 ```
+
+## Using the Accelerator Zoo
+
+In the Jupyter lab enviroment, navigate to
+`accelerator-zoo/workspace/notebooks/` (if using the Docker container) or
+`workspace/notebooks/` and select an accelerator.  Each notebook contains
+instructions specific to that notebook and accelerator.
 
 ## Contributors
 

@@ -1,0 +1,31 @@
+version: '2'
+#
+# 1) Put this file (without .example) in an otherwise empty directory
+# 2) Cd to the directory containing this file
+# 3) Change NB_UID below to the uid of the user you want to own your notebooks
+# 4) [optional] Change TZ environment variable to your timezone
+# 5) [optional] Adjust or add volume mounts to your preference
+# 6) [optional] Change the port exposed by the container
+# 7) [optional] Remove "--NotebookApp.token=''" switch to enable Jupyter tokens
+# 8) [optional] Change "lab" to "notebook" to use Jupyter notebook instead of lab
+# 9) Run the following command:
+#
+#   % docker-compose up -d
+#
+# WARNING: By default this docker compose file disables Jupyter tokens,
+# so do not use on a system exposed directly to the internet.
+#
+services:
+  notebook:
+    image: jsemer/fibertree-notebook:latest
+    user: root
+    environment:
+      - NB_UID=1000
+      - TZ=America/New_York
+    volumes:
+      - ./workspace:/home/jovyan/accelerator-zoo/workspace
+    ports:
+      - "8888:8888"
+    command: "start.sh jupyter lab --NotebookApp.token=''"
+    restart:
+      unless-stopped

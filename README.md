@@ -1,5 +1,24 @@
 # Accelerator Zoo
 
+This repository contains the TeAAL specification and/or HiFiber loop nests
+representing the following accelerators:
+
+- [DSTC](https://dl.acm.org/doi/10.1109/ISCA52012.2021.00088)
+- [ExTensor](https://dl.acm.org/doi/10.1145/3352460.3358275)
+- [Eyeriss](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7738524)
+- [Flexagon](https://dl.acm.org/doi/10.1145/3582016.3582069)
+- [FuseMax](https://arxiv.org/abs/2406.10491)
+- [Gamma](https://dl.acm.org/doi/pdf/10.1145/3445814.3446702)
+- [GraphDynS](https://dl.acm.org/doi/10.1145/3352460.3358318)
+- [Graphicionado](https://dl.acm.org/doi/10.5555/3195638.3195707)
+- [OuterSPACE](https://ieeexplore.ieee.org/document/8327050)
+- [SIGMA](https://ieeexplore.ieee.org/document/9065523)
+- [Tensaurus](https://ieeexplore.ieee.org/document/9065579)
+- [TPUv1](https://arxiv.org/abs/1704.04760)
+
+We welcome contributions of other designs from the community.
+
+
 ## System Requirements
 
 ### Hardware

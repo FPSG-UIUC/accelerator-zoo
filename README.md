@@ -3,6 +3,7 @@
 This repository contains the TeAAL specification and/or HiFiber loop nests
 representing the following accelerators:
 
+- [DRT](https://dl.acm.org/doi/10.1145/3582016.3582064)
 - [DSTC](https://dl.acm.org/doi/10.1109/ISCA52012.2021.00088)
 - [ExTensor](https://dl.acm.org/doi/10.1145/3352460.3358275)
 - [Eyeriss](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7738524)
